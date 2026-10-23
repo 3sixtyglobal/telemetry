@@ -200,6 +200,8 @@ The value for the operation.
 
 ##### customData?
 
+\{\[`key`: `string`\]: `unknown`; \}
+
 Optional custom data forwarded as OTEL attributes.
 
 #### Returns
