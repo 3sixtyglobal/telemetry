@@ -1,5 +1,26 @@
 // Copyright 2026 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
+import { ContextIdKeys, ContextIdStore, type IContextIds } from "@3sixty/context";
+import {
+	AlreadyExistsError,
+	BaseError,
+	ComponentFactory,
+	Converter,
+	GeneralError,
+	Guards,
+	Is,
+	NotFoundError,
+	RandomHelper
+} from "@3sixty/core";
+import type { ILoggingComponent } from "@3sixty/logging-models";
+import { nameof } from "@3sixty/nameof";
+import {
+	type ITelemetryConnector,
+	type ITelemetryMetric,
+	type ITelemetryMetricValueEntry,
+	MetricCounterOperation,
+	MetricType
+} from "@3sixty/telemetry-models";
 import type { Attributes, Counter, Gauge, Meter, UpDownCounter } from "@opentelemetry/api";
 import { OTLPMetricExporter } from "@opentelemetry/exporter-metrics-otlp-http";
 import { PrometheusExporter } from "@opentelemetry/exporter-prometheus";
@@ -9,24 +30,6 @@ import {
 	PeriodicExportingMetricReader,
 	type MetricReader
 } from "@opentelemetry/sdk-metrics";
-import { ContextIdKeys, ContextIdStore, type IContextIds } from "@twin.org/context";
-import {
-	ComponentFactory,
-	Converter,
-	GeneralError,
-	Guards,
-	Is,
-	NotFoundError,
-	RandomHelper
-} from "@twin.org/core";
-import type { ILoggingComponent } from "@twin.org/logging-models";
-import { nameof } from "@twin.org/nameof";
-import {
-	type ITelemetryConnector,
-	type ITelemetryMetric,
-	MetricCounterOperation,
-	MetricType
-} from "@twin.org/telemetry-models";
 import type { IOpenTelemetryTelemetryConnectorConfig } from "./models/IOpenTelemetryTelemetryConnectorConfig.js";
 import type { IOpenTelemetryTelemetryConnectorConstructorOptions } from "./models/IOpenTelemetryTelemetryConnectorConstructorOptions.js";
 import { OpenTelemetryReaderTypes } from "./models/openTelemetryReaderTypes.js";
@@ -160,12 +163,27 @@ export class OpenTelemetryTelemetryConnector implements ITelemetryConnector {
 	}
 
 	/**
-	 * Register a new metric definition. If the connector is already started,
+	 * Register one or more metric definitions. If the connector is already started,
 	 * the OTEL instrument is registered immediately for the current context.
-	 * @param metric The metric details.
-	 * @returns A promise that resolves when the metric has been registered.
+	 * @param metric The metric details, or the details of several metrics.
+	 * @returns A promise that resolves when the metrics have been registered.
 	 */
-	public async createMetric(metric: ITelemetryMetric): Promise<void> {
+	public async createMetric(metric: ITelemetryMetric | ITelemetryMetric[]): Promise<void> {
+		if (Is.array<ITelemetryMetric>(metric)) {
+			// An array declares the set that should exist, so the ones already registered are
+			// left alone. The definitions are held in memory, there is nothing to batch into.
+			for (const entry of metric) {
+				try {
+					await this.createMetric(entry);
+				} catch (err) {
+					if (!BaseError.isErrorName(err, AlreadyExistsError.CLASS_NAME)) {
+						throw err;
+					}
+				}
+			}
+			return;
+		}
+
 		Guards.object<ITelemetryMetric>(
 			OpenTelemetryTelemetryConnector.CLASS_NAME,
 			nameof(metric),
@@ -300,6 +318,26 @@ export class OpenTelemetryTelemetryConnector implements ITelemetryConnector {
 		}
 
 		return valueId;
+	}
+
+	/**
+	 * Add multiple metric values.
+	 * @param values The metric values to add.
+	 * @returns The created metric value ids, in the order the values were supplied.
+	 */
+	public async addMetricValues(values: ITelemetryMetricValueEntry[]): Promise<string[]> {
+		Guards.array<ITelemetryMetricValueEntry>(
+			OpenTelemetryTelemetryConnector.CLASS_NAME,
+			nameof(values),
+			values
+		);
+
+		// The instruments are recorded one at a time, there is nothing to batch into.
+		const valueIds: string[] = [];
+		for (const entry of values) {
+			valueIds.push(await this.addMetricValue(entry.id, entry.value, entry.customData));
+		}
+		return valueIds;
 	}
 
 	/**

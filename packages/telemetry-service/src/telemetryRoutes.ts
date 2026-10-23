@@ -10,10 +10,10 @@ import {
 	type INoContentResponse,
 	type IRestRoute,
 	type ITag
-} from "@twin.org/api-models";
-import { ContextIdStore } from "@twin.org/context";
-import { Coerce, ComponentFactory, Guards } from "@twin.org/core";
-import { nameof } from "@twin.org/nameof";
+} from "@3sixty/api-models";
+import { ContextIdStore } from "@3sixty/context";
+import { Coerce, ComponentFactory, Guards, Is } from "@3sixty/core";
+import { nameof } from "@3sixty/nameof";
 import {
 	MetricType,
 	type ITelemetryAddMetricValueRequest,
@@ -25,12 +25,13 @@ import {
 	type ITelemetryGetMetricValueResponse,
 	type ITelemetryListRequest,
 	type ITelemetryListResponse,
+	type ITelemetryMetric,
 	type ITelemetryRemoveMetricRequest,
 	type ITelemetryUpdateMetricRequest,
 	type ITelemetryValuesListRequest,
 	type ITelemetryValuesListResponse
-} from "@twin.org/telemetry-models";
-import { HeaderTypes, HttpStatusCode, type IHttpHeaders } from "@twin.org/web";
+} from "@3sixty/telemetry-models";
+import { HeaderTypes, HttpStatusCode, type IHttpHeaders } from "@3sixty/web";
 
 /**
  * The source used when communicating about these routes.
@@ -73,7 +74,7 @@ export function generateRestRoutesTelemetry(
 ): IRestRoute[] {
 	const createMetricRoute: IRestRoute<ITelemetryCreateMetricRequest, ICreatedResponse> = {
 		operationId: "telemetryCreateMetric",
-		summary: "Create a telemetry metric",
+		summary: "Create one or more telemetry metrics",
 		tag: tagsTelemetry[0].name,
 		method: "POST",
 		path: `${baseRouteName}/metric`,
@@ -90,8 +91,27 @@ export function generateRestRoutesTelemetry(
 							label: "My Counter",
 							description: "This is my counter",
 							type: MetricType.Counter,
-							unit: "KG"
+							unit: "KG",
+							maxHistory: 1000
 						}
+					}
+				},
+				{
+					id: "telemetryCreateMetricsRequestExample",
+					request: {
+						body: [
+							{
+								id: "my-counter",
+								label: "My Counter",
+								type: MetricType.Counter,
+								maxHistory: 1000
+							},
+							{
+								id: "my-gauge",
+								label: "My Gauge",
+								type: MetricType.Gauge
+							}
+						]
 					}
 				}
 			]
@@ -451,7 +471,7 @@ export function generateRestRoutesTelemetry(
 }
 
 /**
- * Create a new telemetry metric.
+ * Create one or more telemetry metrics.
  * @param httpRequestContext The request context for the API.
  * @param componentName The name of the component to use in the routes.
  * @param request The request.
@@ -465,23 +485,26 @@ export async function telemetryCreateMetric(
 	baseRouteName: string
 ): Promise<ICreatedResponse> {
 	Guards.object<ITelemetryCreateMetricRequest>(ROUTES_SOURCE, nameof(request), request);
-	Guards.object<ITelemetryCreateMetricRequest["body"]>(
-		ROUTES_SOURCE,
-		nameof(request.body),
-		request.body
-	);
+	Guards.defined(ROUTES_SOURCE, nameof(request.body), request.body);
 
 	const component = ComponentFactory.get<ITelemetryComponent>(componentName);
-	await component.createMetric({
-		id: request.body.id,
-		label: request.body.label,
-		description: request.body.description,
-		type: request.body.type,
-		unit: request.body.unit
-	});
+	await component.createMetric(request.body);
 
 	const contextIds = await ContextIdStore.getContextIds();
 	const publicOrigin = contextIds?.[HttpContextIdKeys.PublicOrigin];
+
+	if (Is.array<ITelemetryMetric>(request.body)) {
+		// A batch creates many metrics, so the location points at the collection they joined
+		// rather than at any one of them.
+		return {
+			statusCode: HttpStatusCode.created,
+			headers: {
+				[HeaderTypes.Location]:
+					HttpUrlHelper.combineOriginPath(publicOrigin, `${baseRouteName}/metric`) ??
+					`${baseRouteName}/metric`
+			}
+		};
+	}
 
 	const headers: IHttpHeaders = {};
 	HttpHeaderHelper.buildId(

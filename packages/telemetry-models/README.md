@@ -1,11 +1,11 @@
-# TWIN Telemetry Models
+# 3Sixty Telemetry Models
 
 Shared telemetry models for connectors and services.
 
 ## Installation
 
 ```shell
-npm install @twin.org/telemetry-models
+npm install @3sixty/telemetry-models
 ```
 
 ## Examples
@@ -19,3 +19,7 @@ Detailed reference documentation for the API can be found in [docs/reference/ind
 ## Changelog
 
 The changes between each version can be found in [docs/changelog.md](docs/changelog.md)
+
+## Origin
+
+This package is derived from the original [iotaledger/twin-telemetry](https://github.com/iotaledger/twin-telemetry/tree/next/packages/telemetry-models) repository.

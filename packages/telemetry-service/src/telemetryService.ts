@@ -1,18 +1,19 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import type { IPlatformComponent } from "@twin.org/api-models";
-import { ContextIdKeys, ContextIdStore } from "@twin.org/context";
-import { ComponentFactory, Guards, Is, NotImplementedError } from "@twin.org/core";
-import { nameof } from "@twin.org/nameof";
+import type { IPlatformComponent } from "@3sixty/api-models";
+import { ContextIdKeys, ContextIdStore } from "@3sixty/context";
+import { ComponentFactory, Guards, Is, NotImplementedError } from "@3sixty/core";
+import { nameof } from "@3sixty/nameof";
 import {
 	TelemetryConnectorFactory,
 	type ITelemetryComponent,
 	type ITelemetryConnector,
 	type ITelemetryMetric,
+	type ITelemetryMetricValueEntry,
 	type ITelemetryMetricValue,
 	type MetricCounterOperation,
 	type MetricType
-} from "@twin.org/telemetry-models";
+} from "@3sixty/telemetry-models";
 import type { ITelemetryServiceConstructorOptions } from "./models/ITelemetryServiceConstructorOptions.js";
 
 /**
@@ -58,12 +59,12 @@ export class TelemetryService implements ITelemetryComponent {
 	}
 
 	/**
-	 * Create a new metric.
-	 * @param metric The metric details.
-	 * @returns A promise that resolves when the metric has been created.
+	 * Create one or more metrics.
+	 * @param metric The metric details, or the details of several metrics.
+	 * @returns A promise that resolves when the metrics have been created.
 	 */
-	public async createMetric(metric: ITelemetryMetric): Promise<void> {
-		Guards.object<ITelemetryMetric>(TelemetryService.CLASS_NAME, nameof(metric), metric);
+	public async createMetric(metric: ITelemetryMetric | ITelemetryMetric[]): Promise<void> {
+		Guards.defined(TelemetryService.CLASS_NAME, nameof(metric), metric);
 
 		// If we don't have a tenant context ID and the tenant component is multi-tenant,
 		// we consider the entry as per-tenant and run it in all the tenant context to ensure
@@ -160,6 +161,36 @@ export class TelemetryService implements ITelemetryComponent {
 		}
 
 		return this._telemetryConnector.addMetricValue(id, value, customData);
+	}
+
+	/**
+	 * Add multiple metric values.
+	 * @param values The metric values to add.
+	 * @returns The created metric value ids. When fanned out per-tenant, these are the ids from the last tenant written.
+	 */
+	public async addMetricValues(values: ITelemetryMetricValueEntry[]): Promise<string[]> {
+		Guards.arrayValue<ITelemetryMetricValueEntry>(
+			TelemetryService.CLASS_NAME,
+			nameof(values),
+			values
+		);
+
+		// If we don't have a tenant context ID and the tenant component is multi-tenant,
+		// we consider the entries as per-tenant and run them in all the tenant context to ensure
+		// the values are recorded for each tenant.
+		const contextIds = (await ContextIdStore.getContextIds()) ?? {};
+		const perTenant =
+			!Is.stringValue(contextIds[ContextIdKeys.Tenant]) && this._platformComponent.isMultiTenant();
+
+		if (perTenant) {
+			let valueIds: string[] = [];
+			await this._platformComponent.execute(async () => {
+				valueIds = await this._telemetryConnector.addMetricValues(values);
+			});
+			return valueIds;
+		}
+
+		return this._telemetryConnector.addMetricValues(values);
 	}
 
 	/**

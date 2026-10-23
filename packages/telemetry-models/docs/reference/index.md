@@ -1,4 +1,4 @@
-# @twin.org/telemetry-models
+# @3sixty/telemetry-models
 
 ## Classes
 
@@ -15,6 +15,7 @@
 - [ITelemetryConnector](interfaces/ITelemetryConnector.md)
 - [ITelemetryMetric](interfaces/ITelemetryMetric.md)
 - [ITelemetryMetricValue](interfaces/ITelemetryMetricValue.md)
+- [ITelemetryMetricValueEntry](interfaces/ITelemetryMetricValueEntry.md)
 - [ITelemetryAddMetricValueRequest](interfaces/ITelemetryAddMetricValueRequest.md)
 - [ITelemetryCreateMetricRequest](interfaces/ITelemetryCreateMetricRequest.md)
 - [ITelemetryGetMetricRequest](interfaces/ITelemetryGetMetricRequest.md)

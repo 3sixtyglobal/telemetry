@@ -1,11 +1,11 @@
-# TWIN Telemetry REST Client
+# 3Sixty Telemetry REST Client
 
 REST client for interacting with telemetry service endpoints.
 
 ## Installation
 
 ```shell
-npm install @twin.org/telemetry-rest-client
+npm install @3sixty/telemetry-rest-client
 ```
 
 ## Examples
@@ -19,3 +19,7 @@ Detailed reference documentation for the API can be found in [docs/reference/ind
 ## Changelog
 
 The changes between each version can be found in [docs/changelog.md](docs/changelog.md)
+
+## Origin
+
+This package is derived from the original [iotaledger/twin-telemetry](https://github.com/iotaledger/twin-telemetry/tree/next/packages/telemetry-rest-client) repository.

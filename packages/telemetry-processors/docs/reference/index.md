@@ -1,4 +1,4 @@
-# @twin.org/telemetry-processors
+# @3sixty/telemetry-processors
 
 ## Classes
 
@@ -8,6 +8,7 @@
 
 - [IMetricsRouteProcessorConfig](interfaces/IMetricsRouteProcessorConfig.md)
 - [IMetricsRouteProcessorConstructorOptions](interfaces/IMetricsRouteProcessorConstructorOptions.md)
+- [IPendingMetricRecording](interfaces/IPendingMetricRecording.md)
 
 ## Type Aliases
 

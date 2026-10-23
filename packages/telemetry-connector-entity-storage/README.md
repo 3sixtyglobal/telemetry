@@ -1,11 +1,11 @@
-# TWIN Telemetry Connector Entity Storage
+# 3Sixty Telemetry Connector Entity Storage
 
 Entity storage connector for persisting telemetry metrics.
 
 ## Installation
 
 ```shell
-npm install @twin.org/telemetry-connector-entity-storage
+npm install @3sixty/telemetry-connector-entity-storage
 ```
 
 ## Examples
@@ -19,3 +19,7 @@ Detailed reference documentation for the API can be found in [docs/reference/ind
 ## Changelog
 
 The changes between each version can be found in [docs/changelog.md](docs/changelog.md)
+
+## Origin
+
+This package is derived from the original [iotaledger/twin-telemetry](https://github.com/iotaledger/twin-telemetry/tree/next/packages/telemetry-connector-entity-storage) repository.

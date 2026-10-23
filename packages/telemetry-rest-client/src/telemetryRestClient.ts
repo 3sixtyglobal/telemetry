@@ -1,14 +1,14 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import { BaseRestClient } from "@twin.org/api-core";
+import { BaseRestClient } from "@3sixty/api-core";
 import {
 	HttpHeaderHelper,
 	type IBaseRestClientConfig,
 	type ICreatedResponse,
 	type INoContentResponse
-} from "@twin.org/api-models";
-import { Coerce, Guards } from "@twin.org/core";
-import { nameof } from "@twin.org/nameof";
+} from "@3sixty/api-models";
+import { Coerce, Guards } from "@3sixty/core";
+import { nameof } from "@3sixty/nameof";
 import type {
 	ITelemetryAddMetricValueRequest,
 	ITelemetryComponent,
@@ -18,6 +18,7 @@ import type {
 	ITelemetryGetMetricValueRequest,
 	ITelemetryGetMetricValueResponse,
 	ITelemetryListRequest,
+	ITelemetryMetricValueEntry,
 	ITelemetryListResponse,
 	ITelemetryMetric,
 	ITelemetryMetricValue,
@@ -27,8 +28,8 @@ import type {
 	ITelemetryValuesListResponse,
 	MetricCounterOperation,
 	MetricType
-} from "@twin.org/telemetry-models";
-import { HttpMethod } from "@twin.org/web";
+} from "@3sixty/telemetry-models";
+import { HttpMethod } from "@3sixty/web";
 
 /**
  * Client for performing telemetry through to REST endpoints.
@@ -56,12 +57,12 @@ export class TelemetryRestClient extends BaseRestClient implements ITelemetryCom
 	}
 
 	/**
-	 * Create a new metric.
-	 * @param metric The metric details.
-	 * @returns A promise that resolves when the metric has been created.
+	 * Create one or more metrics.
+	 * @param metric The metric details, or the details of several metrics.
+	 * @returns A promise that resolves when the metrics have been created.
 	 */
-	public async createMetric(metric: ITelemetryMetric): Promise<void> {
-		Guards.object<ITelemetryMetric>(TelemetryRestClient.CLASS_NAME, nameof(metric), metric);
+	public async createMetric(metric: ITelemetryMetric | ITelemetryMetric[]): Promise<void> {
+		Guards.defined(TelemetryRestClient.CLASS_NAME, nameof(metric), metric);
 
 		await this.fetch<ITelemetryCreateMetricRequest, ICreatedResponse>("/metric", HttpMethod.POST, {
 			body: metric
@@ -170,6 +171,26 @@ export class TelemetryRestClient extends BaseRestClient implements ITelemetryCom
 			response.headers,
 			`${this.getPathPrefix()}/metric/:metricId/value/:id`
 		);
+	}
+
+	/**
+	 * Add multiple metric values.
+	 * @param values The metric values to add.
+	 * @returns The created metric value ids, in the order the values were supplied.
+	 */
+	public async addMetricValues(values: ITelemetryMetricValueEntry[]): Promise<string[]> {
+		Guards.array<ITelemetryMetricValueEntry>(
+			TelemetryRestClient.CLASS_NAME,
+			nameof(values),
+			values
+		);
+
+		// The REST surface records one value per request, so each value becomes a request.
+		const valueIds: string[] = [];
+		for (const entry of values) {
+			valueIds.push(await this.addMetricValue(entry.id, entry.value, entry.customData));
+		}
+		return valueIds;
 	}
 
 	/**

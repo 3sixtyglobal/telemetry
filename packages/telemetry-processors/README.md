@@ -1,11 +1,11 @@
-# TWIN Telemetry Processors
+# 3Sixty Telemetry Processors
 
 Route processors for recording telemetry metrics from the web server.
 
 ## Installation
 
 ```shell
-npm install @twin.org/telemetry-processors
+npm install @3sixty/telemetry-processors
 ```
 
 ## Examples
@@ -19,3 +19,7 @@ Detailed reference documentation for the API can be found in [docs/reference/ind
 ## Changelog
 
 The changes between each version can be found in [docs/changelog.md](docs/changelog.md)
+
+## Origin
+
+This package is derived from the original [iotaledger/twin-telemetry](https://github.com/iotaledger/twin-telemetry/tree/next/packages/telemetry-processors) repository.
