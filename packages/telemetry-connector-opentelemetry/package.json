@@ -1,6 +1,6 @@
 {
 	"name": "@3sixty/telemetry-connector-opentelemetry",
-	"version": "0.20.0-next.0",
+	"version": "0.20.0-next.1",
 	"description": "OpenTelemetry connector for pushing telemetry metrics to OTEL-compatible backends.",
 	"repository": {
 		"type": "git",
@@ -33,8 +33,8 @@
 		"@3sixty/entity-storage-models": "next",
 		"@3sixty/logging-models": "next",
 		"@3sixty/nameof": "next",
-		"@3sixty/telemetry-connector-entity-storage": "0.20.0-next.0",
-		"@3sixty/telemetry-models": "0.20.0-next.0",
+		"@3sixty/telemetry-connector-entity-storage": "0.20.0-next.1",
+		"@3sixty/telemetry-models": "0.20.0-next.1",
 		"@opentelemetry/api": "1.9.1",
 		"@opentelemetry/exporter-metrics-otlp-http": "0.223.0",
 		"@opentelemetry/exporter-prometheus": "0.223.0",
