@@ -4,6 +4,7 @@ import {
 	HttpContextIdKeys,
 	HttpHeaderHelper,
 	HttpUrlHelper,
+	type IRouteAuthorization,
 	type ICreatedResponse,
 	type IHttpRequestContext,
 	type INoContentResponse,
@@ -46,6 +47,20 @@ export const tagsTelemetry: ITag[] = [
 		description: "Endpoints which are modelled to access a telemetry contract."
 	}
 ];
+
+/**
+ * The default authorization for the routes, used to seed authorization rules.
+ */
+const DEFAULT_AUTHORIZATION_READER: IRouteAuthorization = {
+	permission: "telemetry:read",
+	role: "devops"
+};
+
+const DEFAULT_AUTHORIZATION_WRITER: IRouteAuthorization = {
+	permission: "telemetry:write",
+	role: "devops",
+	inherits: [DEFAULT_AUTHORIZATION_READER.permission]
+};
 
 /**
  * The REST routes for telemetry.
@@ -116,7 +131,8 @@ export function generateRestRoutesTelemetry(
 					}
 				]
 			}
-		]
+		],
+		defaultAuthorization: DEFAULT_AUTHORIZATION_WRITER
 	};
 
 	const getMetricRoute: IRestRoute<ITelemetryGetMetricRequest, ITelemetryGetMetricResponse> = {
@@ -165,7 +181,8 @@ export function generateRestRoutesTelemetry(
 					}
 				]
 			}
-		]
+		],
+		defaultAuthorization: DEFAULT_AUTHORIZATION_READER
 	};
 
 	const updateMetricRoute: IRestRoute<ITelemetryUpdateMetricRequest, INoContentResponse> = {
@@ -196,7 +213,8 @@ export function generateRestRoutesTelemetry(
 			{
 				type: nameof<INoContentResponse>()
 			}
-		]
+		],
+		defaultAuthorization: DEFAULT_AUTHORIZATION_WRITER
 	};
 
 	const addMetricValueRoute: IRestRoute<ITelemetryAddMetricValueRequest, ICreatedResponse> = {
@@ -249,7 +267,8 @@ export function generateRestRoutesTelemetry(
 					}
 				]
 			}
-		]
+		],
+		defaultAuthorization: DEFAULT_AUTHORIZATION_WRITER
 	};
 
 	const removeMetricRoute: IRestRoute<ITelemetryRemoveMetricRequest, INoContentResponse> = {
@@ -277,7 +296,8 @@ export function generateRestRoutesTelemetry(
 			{
 				type: nameof<INoContentResponse>()
 			}
-		]
+		],
+		defaultAuthorization: DEFAULT_AUTHORIZATION_WRITER
 	};
 
 	const listMetricsRoute: IRestRoute<ITelemetryListRequest, ITelemetryListResponse> = {
@@ -329,7 +349,8 @@ export function generateRestRoutesTelemetry(
 					}
 				]
 			}
-		]
+		],
+		defaultAuthorization: DEFAULT_AUTHORIZATION_READER
 	};
 
 	const getMetricValueRoute: IRestRoute<
@@ -373,7 +394,8 @@ export function generateRestRoutesTelemetry(
 					}
 				]
 			}
-		]
+		],
+		defaultAuthorization: DEFAULT_AUTHORIZATION_READER
 	};
 
 	const listMetricsValuesRoute: IRestRoute<
@@ -432,7 +454,8 @@ export function generateRestRoutesTelemetry(
 					}
 				]
 			}
-		]
+		],
+		defaultAuthorization: DEFAULT_AUTHORIZATION_READER
 	};
 
 	return [

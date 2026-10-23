@@ -1,4 +1,5 @@
 // Copyright 2026 IOTA Stiftung.
+// Copyright 2026 3Sixty Trade Ltd.
 // SPDX-License-Identifier: Apache-2.0.
 import type { IPlatformComponent } from "@3sixty/api-models";
 import { ComponentFactory, GuardError, ValidationError } from "@3sixty/core";
@@ -30,7 +31,10 @@ function makePlatformComponent(
 		className: () => "mock-platform-component",
 		isMultiTenant: () => isMultiTenant,
 		execute,
-		getLocalOriginContext: async () => undefined
+		getLocalOriginContext: async () => undefined,
+		registerTenantEventCallback: () => {},
+		unregisterTenantEventCallback: () => {},
+		fireTenantEvent: async () => {}
 	};
 }
 
