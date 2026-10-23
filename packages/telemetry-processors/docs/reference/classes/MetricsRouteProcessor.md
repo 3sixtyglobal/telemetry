@@ -162,6 +162,8 @@ The context IDs for the request.
 
 ##### processorState
 
+\{\[`id`: `string`\]: `unknown`; \}
+
 Shared state for the current request processor chain.
 
 #### Returns

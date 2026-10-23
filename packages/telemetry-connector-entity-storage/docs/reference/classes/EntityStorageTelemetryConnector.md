@@ -273,6 +273,8 @@ The value for the add operation.
 
 ##### customData?
 
+\{\[`key`: `string`\]: `unknown`; \}
+
 The custom data for the metric value.
 
 #### Returns

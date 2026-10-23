@@ -93,6 +93,8 @@ The metric ID.
 
 ##### customData?
 
+\{\[`key`: `string`\]: `unknown`; \}
+
 Optional custom data for the increment.
 
 ##### onError?
@@ -130,6 +132,8 @@ The telemetry component to use for decrementing the metric.
 The metric ID.
 
 ##### customData?
+
+\{\[`key`: `string`\]: `unknown`; \}
 
 Optional custom data for the decrement.
 
@@ -174,6 +178,8 @@ The metric ID.
 The metric value to set.
 
 ##### customData?
+
+\{\[`key`: `string`\]: `unknown`; \}
 
 Optional custom data for setting the value.
 

@@ -126,6 +126,8 @@ The value for the update operation.
 
 ##### customData?
 
+\{\[`key`: `string`\]: `unknown`; \}
+
 The custom data for the update operation.
 
 #### Returns
