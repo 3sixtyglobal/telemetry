@@ -1,6 +1,6 @@
 {
 	"name": "@3sixty/telemetry-processors",
-	"version": "0.20.0-next.1",
+	"version": "0.20.0-next.2",
 	"description": "Route processors for recording telemetry metrics.",
 	"repository": {
 		"type": "git",
@@ -35,7 +35,7 @@
 		"@3sixty/core": "next",
 		"@3sixty/logging-models": "next",
 		"@3sixty/nameof": "next",
-		"@3sixty/telemetry-models": "0.20.0-next.1"
+		"@3sixty/telemetry-models": "0.20.0-next.2"
 	},
 	"devDependencies": {
 		"@3sixty/nameof-transformer": "next",

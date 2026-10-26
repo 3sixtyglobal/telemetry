@@ -1,6 +1,6 @@
 {
 	"name": "@3sixty/telemetry-connector-entity-storage",
-	"version": "0.20.0-next.1",
+	"version": "0.20.0-next.2",
 	"description": "Entity storage connector for persisting telemetry metrics.",
 	"repository": {
 		"type": "git",
@@ -38,7 +38,7 @@
 		"@3sixty/logging-models": "next",
 		"@3sixty/modules": "next",
 		"@3sixty/nameof": "next",
-		"@3sixty/telemetry-models": "0.20.0-next.1"
+		"@3sixty/telemetry-models": "0.20.0-next.2"
 	},
 	"devDependencies": {
 		"@3sixty/background-task-service": "next",

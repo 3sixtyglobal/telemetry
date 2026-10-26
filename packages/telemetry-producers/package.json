@@ -1,6 +1,6 @@
 {
 	"name": "@3sixty/telemetry-producers",
-	"version": "0.20.0-next.1",
+	"version": "0.20.0-next.2",
 	"description": "Metrics producers for collecting Node.js process and system telemetry.",
 	"repository": {
 		"type": "git",
@@ -32,7 +32,7 @@
 	"dependencies": {
 		"@3sixty/core": "next",
 		"@3sixty/nameof": "next",
-		"@3sixty/telemetry-models": "0.20.0-next.1"
+		"@3sixty/telemetry-models": "0.20.0-next.2"
 	},
 	"devDependencies": {
 		"@3sixty/nameof-transformer": "next",
