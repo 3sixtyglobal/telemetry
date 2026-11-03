@@ -40,7 +40,7 @@ Default number of entries to accumulate before writing.
 
 ### DEFAULT\_BATCH\_INTERVAL\_MS {#default_batch_interval_ms}
 
-> `readonly` `static` **DEFAULT\_BATCH\_INTERVAL\_MS**: `number` = `5000`
+> `readonly` `static` **DEFAULT\_BATCH\_INTERVAL\_MS**: `number`
 
 Default interval in milliseconds between automatic writes.
 
@@ -56,7 +56,7 @@ Default maximum number of entries to hold when a write fails and the entries are
 
 ### DEFAULT\_TRIM\_INTERVAL\_MS {#default_trim_interval_ms}
 
-> `readonly` `static` **DEFAULT\_TRIM\_INTERVAL\_MS**: `number` = `60000`
+> `readonly` `static` **DEFAULT\_TRIM\_INTERVAL\_MS**: `number` = `DurationConstants.MsPerMinute`
 
 Default interval in milliseconds between trim passes.
 

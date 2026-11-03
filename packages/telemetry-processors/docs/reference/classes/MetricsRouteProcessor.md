@@ -66,7 +66,7 @@ Default number of recordings queued before new ones are dropped.
 
 ### DEFAULT\_DRAIN\_INTERVAL\_MS {#default_drain_interval_ms}
 
-> `readonly` `static` **DEFAULT\_DRAIN\_INTERVAL\_MS**: `number` = `1000`
+> `readonly` `static` **DEFAULT\_DRAIN\_INTERVAL\_MS**: `number` = `DurationConstants.MsPerSecond`
 
 Default interval in milliseconds between drains of the queue.
 
