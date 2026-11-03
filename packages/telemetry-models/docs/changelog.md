@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.0-next.3](https://github.com/3sixtyglobal/telemetry/compare/telemetry-models-v0.20.0-next.2...telemetry-models-v0.20.0-next.3) (2026-11-03)
+
+
+### Miscellaneous Chores
+
+* **telemetry-models:** Synchronize repo versions
+
 ## [0.20.0-next.2](https://github.com/3sixtyglobal/telemetry/compare/telemetry-models-v0.20.0-next.1...telemetry-models-v0.20.0-next.2) (2026-10-26)
 
 
