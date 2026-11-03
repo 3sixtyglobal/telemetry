@@ -1,7 +1,8 @@
 // Copyright 2026 IOTA Stiftung.
+// Copyright 2026 3Sixty Trade Ltd.
 // SPDX-License-Identifier: Apache-2.0.
 import { ContextIdKeys, ContextIdStore, type IContextIds } from "@3sixty/context";
-import { BaseError, Coerce, ComponentFactory, Is } from "@3sixty/core";
+import { BaseError, Coerce, ComponentFactory, DurationConstants, Is } from "@3sixty/core";
 import {
 	ComparisonOperator,
 	type EntityCondition,
@@ -42,7 +43,7 @@ export class MetricValueWriter {
 	/**
 	 * Default interval in milliseconds between automatic writes.
 	 */
-	public static readonly DEFAULT_BATCH_INTERVAL_MS: number = 5000;
+	public static readonly DEFAULT_BATCH_INTERVAL_MS: number = 5 * DurationConstants.MsPerSecond;
 
 	/**
 	 * Default maximum number of entries to hold when a write fails and the entries are re-queued.
@@ -52,7 +53,7 @@ export class MetricValueWriter {
 	/**
 	 * Default interval in milliseconds between trim passes.
 	 */
-	public static readonly DEFAULT_TRIM_INTERVAL_MS: number = 60000;
+	public static readonly DEFAULT_TRIM_INTERVAL_MS: number = DurationConstants.MsPerMinute;
 
 	/**
 	 * Default maximum number of values a single trim pass removes from one metric.

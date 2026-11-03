@@ -2,7 +2,13 @@
 // Copyright 2026 3Sixty Trade Ltd.
 // SPDX-License-Identifier: Apache-2.0.
 import type { IPlatformComponent } from "@3sixty/api-models";
-import { ComponentFactory, GuardError, ValidationError } from "@3sixty/core";
+import {
+	ComponentFactory,
+	DurationConstants,
+	GeneralError,
+	GuardError,
+	ValidationError
+} from "@3sixty/core";
 import {
 	MetricsProducerFactory,
 	type IMetricsProducer,
@@ -13,6 +19,15 @@ import { MetricsCollectorService } from "../src/metricsCollectorService.js";
 
 const DEFAULT_PLATFORM_TYPE = "platform";
 const CUSTOM_PLATFORM_TYPE = "test-platform-component";
+const DEFAULT_TELEMETRY_TYPE = "telemetry";
+
+function makeTelemetryComponent(): ITelemetryComponent {
+	return {
+		className: () => "mock-telemetry",
+		addMetricValue: async () => "v",
+		addMetricValues: async (values: ITelemetryMetricValueEntry[]) => values.map(() => "v")
+	} as unknown as ITelemetryComponent;
+}
 
 function makeProducer(overrides: Partial<IMetricsProducer> = {}): IMetricsProducer {
 	return {
@@ -49,11 +64,15 @@ describe("MetricsCollectorService", () => {
 		}
 		// Always provide a default platform component so the service can be constructed.
 		ComponentFactory.register(DEFAULT_PLATFORM_TYPE, makeSingleTenantPassthrough);
+		ComponentFactory.register(DEFAULT_TELEMETRY_TYPE, makeTelemetryComponent);
 	});
 
 	afterEach(() => {
 		try {
 			ComponentFactory.unregister(DEFAULT_PLATFORM_TYPE);
+		} catch {}
+		try {
+			ComponentFactory.unregister(DEFAULT_TELEMETRY_TYPE);
 		} catch {}
 		try {
 			ComponentFactory.unregister(CUSTOM_PLATFORM_TYPE);
@@ -85,7 +104,9 @@ describe("MetricsCollectorService", () => {
 				})
 			);
 
-			const service = new MetricsCollectorService({ config: { intervalMs: 60_000 } });
+			const service = new MetricsCollectorService({
+				config: { intervalMs: DurationConstants.MsPerMinute }
+			});
 			await service.tick();
 			await service.stop();
 			ComponentFactory.unregister("telemetry");
@@ -118,7 +139,9 @@ describe("MetricsCollectorService", () => {
 				makeProducer({ collect: async () => [{ id: "g1", value: 1 }] })
 			);
 
-			const service = new MetricsCollectorService({ config: { intervalMs: 60_000 } });
+			const service = new MetricsCollectorService({
+				config: { intervalMs: DurationConstants.MsPerMinute }
+			});
 			await service.tick();
 			await service.stop();
 			ComponentFactory.unregister("telemetry");
@@ -133,8 +156,16 @@ describe("MetricsCollectorService", () => {
 			expect(() => new MetricsCollectorService()).not.toThrow();
 		});
 
+		test("throws when the telemetry component is not registered", () => {
+			ComponentFactory.unregister(DEFAULT_TELEMETRY_TYPE);
+			expect(() => new MetricsCollectorService()).toThrow(GeneralError);
+		});
+
 		test("accepts positive interval", () => {
-			expect(() => new MetricsCollectorService({ config: { intervalMs: 5000 } })).not.toThrow();
+			expect(
+				() =>
+					new MetricsCollectorService({ config: { intervalMs: 5 * DurationConstants.MsPerSecond } })
+			).not.toThrow();
 		});
 
 		test("throws for zero interval", () => {
@@ -180,7 +211,9 @@ describe("MetricsCollectorService", () => {
 				})
 			);
 
-			const service = new MetricsCollectorService({ config: { intervalMs: 60_000 } });
+			const service = new MetricsCollectorService({
+				config: { intervalMs: DurationConstants.MsPerMinute }
+			});
 			await service.start();
 			await service.stop();
 
@@ -197,7 +230,9 @@ describe("MetricsCollectorService", () => {
 				})
 			);
 
-			const service = new MetricsCollectorService({ config: { intervalMs: 60_000 } });
+			const service = new MetricsCollectorService({
+				config: { intervalMs: DurationConstants.MsPerMinute }
+			});
 			await service.start();
 			await service.start();
 			await service.stop();
@@ -221,7 +256,9 @@ describe("MetricsCollectorService", () => {
 				});
 			});
 
-			const service = new MetricsCollectorService({ config: { intervalMs: 60_000 } });
+			const service = new MetricsCollectorService({
+				config: { intervalMs: DurationConstants.MsPerMinute }
+			});
 			await service.start();
 			await service.tick();
 			await service.stop();
@@ -250,7 +287,7 @@ describe("MetricsCollectorService", () => {
 			);
 
 			const service = new MetricsCollectorService({
-				config: { intervalMs: 60_000 },
+				config: { intervalMs: DurationConstants.MsPerMinute },
 				platformComponentType: CUSTOM_PLATFORM_TYPE
 			});
 			await service.start();
@@ -277,7 +314,7 @@ describe("MetricsCollectorService", () => {
 			);
 
 			const service = new MetricsCollectorService({
-				config: { intervalMs: 60_000 },
+				config: { intervalMs: DurationConstants.MsPerMinute },
 				platformComponentType: CUSTOM_PLATFORM_TYPE
 			});
 			await service.start();
@@ -317,7 +354,9 @@ describe("MetricsCollectorService", () => {
 					})
 				);
 
-				const service = new MetricsCollectorService({ config: { intervalMs: 60_000 } });
+				const service = new MetricsCollectorService({
+					config: { intervalMs: DurationConstants.MsPerMinute }
+				});
 				await service.tick();
 
 				expect(collected).toContain("p1");
@@ -342,7 +381,9 @@ describe("MetricsCollectorService", () => {
 					})
 				);
 
-				const service = new MetricsCollectorService({ config: { intervalMs: 60_000 } });
+				const service = new MetricsCollectorService({
+					config: { intervalMs: DurationConstants.MsPerMinute }
+				});
 				await service.tick();
 
 				expect(collected).toContain("good");
@@ -370,7 +411,7 @@ describe("MetricsCollectorService", () => {
 				);
 
 				const service = new MetricsCollectorService({
-					config: { intervalMs: 60_000 },
+					config: { intervalMs: DurationConstants.MsPerMinute },
 					platformComponentType: CUSTOM_PLATFORM_TYPE
 				});
 				await service.tick();
@@ -397,7 +438,7 @@ describe("MetricsCollectorService", () => {
 				);
 
 				const service = new MetricsCollectorService({
-					config: { intervalMs: 60_000 },
+					config: { intervalMs: DurationConstants.MsPerMinute },
 					platformComponentType: CUSTOM_PLATFORM_TYPE
 				});
 				await service.tick();
@@ -431,7 +472,7 @@ describe("MetricsCollectorService", () => {
 				);
 
 				const service = new MetricsCollectorService({
-					config: { intervalMs: 60_000 },
+					config: { intervalMs: DurationConstants.MsPerMinute },
 					platformComponentType: CUSTOM_PLATFORM_TYPE
 				});
 				await service.tick();

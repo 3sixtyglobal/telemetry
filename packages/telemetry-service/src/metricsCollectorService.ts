@@ -1,9 +1,11 @@
 // Copyright 2026 IOTA Stiftung.
+// Copyright 2026 3Sixty Trade Ltd.
 // SPDX-License-Identifier: Apache-2.0.
 import type { IPlatformComponent } from "@3sixty/api-models";
 import {
 	BaseError,
 	ComponentFactory,
+	DurationConstants,
 	Guards,
 	type IValidationFailure,
 	Validation
@@ -44,7 +46,7 @@ export class MetricsCollectorService implements IMetricsCollectorComponent {
 	 * Telemetry component the collected values are recorded with.
 	 * @internal
 	 */
-	private readonly _telemetryComponent?: ITelemetryComponent;
+	private readonly _telemetryComponent: ITelemetryComponent;
 
 	/**
 	 * Polling interval in milliseconds.
@@ -76,11 +78,11 @@ export class MetricsCollectorService implements IMetricsCollectorComponent {
 		this._platformComponent = ComponentFactory.get<IPlatformComponent>(
 			options?.platformComponentType ?? "platform"
 		);
-		this._telemetryComponent = ComponentFactory.getIfExists<ITelemetryComponent>(
+		this._telemetryComponent = ComponentFactory.get<ITelemetryComponent>(
 			options?.telemetryComponentType ?? "telemetry"
 		);
 
-		const intervalMs = options?.config?.intervalMs ?? 60_000;
+		const intervalMs = options?.config?.intervalMs ?? DurationConstants.MsPerMinute;
 		Guards.integer(MetricsCollectorService.CLASS_NAME, nameof(intervalMs), intervalMs);
 		const failures: IValidationFailure[] = [];
 		Validation.integer(nameof(intervalMs), intervalMs, failures, undefined, { minValue: 1 });
