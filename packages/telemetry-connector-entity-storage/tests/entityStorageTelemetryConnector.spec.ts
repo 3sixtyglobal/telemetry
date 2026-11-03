@@ -1,4 +1,5 @@
 // Copyright 2024 IOTA Stiftung.
+// Copyright 2026 3Sixty Trade Ltd.
 // SPDX-License-Identifier: Apache-2.0.
 import { mkdir, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -13,7 +14,7 @@ import {
 	type BackgroundTask
 } from "@3sixty/background-task-service";
 import { ContextIdKeys, ContextIdStore } from "@3sixty/context";
-import { ComponentFactory } from "@3sixty/core";
+import { ComponentFactory, DurationConstants } from "@3sixty/core";
 import { FileEntityStorageConnector } from "@3sixty/entity-storage-connector-file";
 import { MemoryEntityStorageConnector } from "@3sixty/entity-storage-connector-memory";
 import { EntityStorageConnectorFactory } from "@3sixty/entity-storage-models";
@@ -29,7 +30,7 @@ import { initSchema } from "../src/schema.js";
 const TEST_TASK_HANDLER = new URL("./testTelemetryMetricValueTask.js", import.meta.url).href;
 const STALLING_TASK_HANDLER = new URL("./testStallingMetricValueTask.js", import.meta.url).href;
 const TEST_VALUE_DIRECTORY = fileURLToPath(new URL("./.tmp/metric-values/", import.meta.url));
-const TEST_TIMEOUT = 30000;
+const TEST_TIMEOUT = 30 * DurationConstants.MsPerSecond;
 
 /**
  * Poll a condition until it is true or the attempt bound is reached, for synchronising with
@@ -238,7 +239,12 @@ describe("EntityStorageTelemetryConnector", () => {
 		const registerSpy = vi.spyOn(backgroundTaskService, "registerHandler");
 
 		await createConnector({
-			config: { batchSize: 4, batchIntervalMs: 0, maxCacheSize: 7, trimIntervalMs: 30000 }
+			config: {
+				batchSize: 4,
+				batchIntervalMs: 0,
+				maxCacheSize: 7,
+				trimIntervalMs: 30 * DurationConstants.MsPerSecond
+			}
 		});
 
 		const handlerOptions = registerSpy.mock.calls[0][4] as {
@@ -251,7 +257,7 @@ describe("EntityStorageTelemetryConnector", () => {
 				batchSize: 4,
 				batchIntervalMs: 0,
 				maxCacheSize: 7,
-				trimIntervalMs: 30000,
+				trimIntervalMs: 30 * DurationConstants.MsPerSecond,
 				trimRemoveLimit: undefined
 			}
 		]);
@@ -982,7 +988,11 @@ describe("EntityStorageTelemetryConnector", () => {
 			const createSpy = vi.spyOn(backgroundTaskService, "create");
 
 			const telemetry = await createConnector({
-				config: { batchSize: 0, batchIntervalMs: 0, taskCoalesceMs: 10000 }
+				config: {
+					batchSize: 0,
+					batchIntervalMs: 0,
+					taskCoalesceMs: 10 * DurationConstants.MsPerSecond
+				}
 			});
 			await telemetry.createMetric({ id: "test", label: "Test", type: MetricType.Counter });
 
@@ -1014,7 +1024,7 @@ describe("EntityStorageTelemetryConnector", () => {
 				config: {
 					batchSize: 100,
 					batchIntervalMs: 0,
-					taskStallTimeoutMs: 1000,
+					taskStallTimeoutMs: DurationConstants.MsPerSecond,
 					// A handler whose task never completes, so the worker is left busy for good.
 					overrideMetricValueTaskHandler: STALLING_TASK_HANDLER
 				}
@@ -1096,7 +1106,11 @@ describe("EntityStorageTelemetryConnector", () => {
 		"leaves the background thread alone while it is still completing tasks",
 		async () => {
 			const telemetry = await createConnector({
-				config: { batchSize: 100, batchIntervalMs: 0, taskStallTimeoutMs: 1000 }
+				config: {
+					batchSize: 100,
+					batchIntervalMs: 0,
+					taskStallTimeoutMs: DurationConstants.MsPerSecond
+				}
 			});
 			await telemetry.createMetric({ id: "test", label: "Test", type: MetricType.Counter });
 
@@ -1551,7 +1565,7 @@ describe("EntityStorageTelemetryConnector", () => {
 					// check which fires while a real task is still in flight replaces the thread,
 					// and the shutdown writes the value the read below must not see yet.
 					flushTimeoutMs: 1500,
-					taskStallTimeoutMs: 1000
+					taskStallTimeoutMs: DurationConstants.MsPerSecond
 				}
 			});
 			await telemetry.createMetric({ id: "test", label: "Test", type: MetricType.Counter });
@@ -1598,7 +1612,7 @@ describe("EntityStorageTelemetryConnector", () => {
 					// check which fires while a real task is still in flight replaces the thread,
 					// and the shutdown writes the value the read below must not see yet.
 					flushTimeoutMs: 1500,
-					taskStallTimeoutMs: 1000
+					taskStallTimeoutMs: DurationConstants.MsPerSecond
 				}
 			});
 			await telemetry.createMetric({ id: "test", label: "Test", type: MetricType.Counter });

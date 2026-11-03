@@ -1,4 +1,5 @@
 // Copyright 2026 IOTA Stiftung.
+// Copyright 2026 3Sixty Trade Ltd.
 // SPDX-License-Identifier: Apache-2.0.
 import type {
 	IBaseRoute,
@@ -7,7 +8,15 @@ import type {
 	IHttpServerRequest
 } from "@3sixty/api-models";
 import { ContextIdStore, type IContextIds } from "@3sixty/context";
-import { BaseError, Coerce, ComponentFactory, Is, JsonHelper, ObjectHelper } from "@3sixty/core";
+import {
+	BaseError,
+	Coerce,
+	ComponentFactory,
+	DurationConstants,
+	Is,
+	JsonHelper,
+	ObjectHelper
+} from "@3sixty/core";
 import type { ILoggingComponent } from "@3sixty/logging-models";
 import { nameof } from "@3sixty/nameof";
 import {
@@ -60,7 +69,7 @@ export class MetricsRouteProcessor implements IBaseRouteProcessor {
 	/**
 	 * Default interval in milliseconds between drains of the queue.
 	 */
-	public static readonly DEFAULT_DRAIN_INTERVAL_MS: number = 1000;
+	public static readonly DEFAULT_DRAIN_INTERVAL_MS: number = DurationConstants.MsPerSecond;
 
 	/**
 	 * Resolved telemetry component.

@@ -5,6 +5,7 @@ import type { IPlatformComponent } from "@3sixty/api-models";
 import {
 	BaseError,
 	ComponentFactory,
+	DurationConstants,
 	Guards,
 	type IValidationFailure,
 	Validation
@@ -81,7 +82,7 @@ export class MetricsCollectorService implements IMetricsCollectorComponent {
 			options?.telemetryComponentType ?? "telemetry"
 		);
 
-		const intervalMs = options?.config?.intervalMs ?? 60_000;
+		const intervalMs = options?.config?.intervalMs ?? DurationConstants.MsPerMinute;
 		Guards.integer(MetricsCollectorService.CLASS_NAME, nameof(intervalMs), intervalMs);
 		const failures: IValidationFailure[] = [];
 		Validation.integer(nameof(intervalMs), intervalMs, failures, undefined, { minValue: 1 });

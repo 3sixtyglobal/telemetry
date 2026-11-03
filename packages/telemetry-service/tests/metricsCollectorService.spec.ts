@@ -2,7 +2,13 @@
 // Copyright 2026 3Sixty Trade Ltd.
 // SPDX-License-Identifier: Apache-2.0.
 import type { IPlatformComponent } from "@3sixty/api-models";
-import { ComponentFactory, GeneralError, GuardError, ValidationError } from "@3sixty/core";
+import {
+	ComponentFactory,
+	DurationConstants,
+	GeneralError,
+	GuardError,
+	ValidationError
+} from "@3sixty/core";
 import {
 	MetricsProducerFactory,
 	type IMetricsProducer,
@@ -98,7 +104,9 @@ describe("MetricsCollectorService", () => {
 				})
 			);
 
-			const service = new MetricsCollectorService({ config: { intervalMs: 60_000 } });
+			const service = new MetricsCollectorService({
+				config: { intervalMs: DurationConstants.MsPerMinute }
+			});
 			await service.tick();
 			await service.stop();
 			ComponentFactory.unregister("telemetry");
@@ -131,7 +139,9 @@ describe("MetricsCollectorService", () => {
 				makeProducer({ collect: async () => [{ id: "g1", value: 1 }] })
 			);
 
-			const service = new MetricsCollectorService({ config: { intervalMs: 60_000 } });
+			const service = new MetricsCollectorService({
+				config: { intervalMs: DurationConstants.MsPerMinute }
+			});
 			await service.tick();
 			await service.stop();
 			ComponentFactory.unregister("telemetry");
@@ -152,7 +162,10 @@ describe("MetricsCollectorService", () => {
 		});
 
 		test("accepts positive interval", () => {
-			expect(() => new MetricsCollectorService({ config: { intervalMs: 5000 } })).not.toThrow();
+			expect(
+				() =>
+					new MetricsCollectorService({ config: { intervalMs: 5 * DurationConstants.MsPerSecond } })
+			).not.toThrow();
 		});
 
 		test("throws for zero interval", () => {
@@ -198,7 +211,9 @@ describe("MetricsCollectorService", () => {
 				})
 			);
 
-			const service = new MetricsCollectorService({ config: { intervalMs: 60_000 } });
+			const service = new MetricsCollectorService({
+				config: { intervalMs: DurationConstants.MsPerMinute }
+			});
 			await service.start();
 			await service.stop();
 
@@ -215,7 +230,9 @@ describe("MetricsCollectorService", () => {
 				})
 			);
 
-			const service = new MetricsCollectorService({ config: { intervalMs: 60_000 } });
+			const service = new MetricsCollectorService({
+				config: { intervalMs: DurationConstants.MsPerMinute }
+			});
 			await service.start();
 			await service.start();
 			await service.stop();
@@ -239,7 +256,9 @@ describe("MetricsCollectorService", () => {
 				});
 			});
 
-			const service = new MetricsCollectorService({ config: { intervalMs: 60_000 } });
+			const service = new MetricsCollectorService({
+				config: { intervalMs: DurationConstants.MsPerMinute }
+			});
 			await service.start();
 			await service.tick();
 			await service.stop();
@@ -268,7 +287,7 @@ describe("MetricsCollectorService", () => {
 			);
 
 			const service = new MetricsCollectorService({
-				config: { intervalMs: 60_000 },
+				config: { intervalMs: DurationConstants.MsPerMinute },
 				platformComponentType: CUSTOM_PLATFORM_TYPE
 			});
 			await service.start();
@@ -295,7 +314,7 @@ describe("MetricsCollectorService", () => {
 			);
 
 			const service = new MetricsCollectorService({
-				config: { intervalMs: 60_000 },
+				config: { intervalMs: DurationConstants.MsPerMinute },
 				platformComponentType: CUSTOM_PLATFORM_TYPE
 			});
 			await service.start();
@@ -335,7 +354,9 @@ describe("MetricsCollectorService", () => {
 					})
 				);
 
-				const service = new MetricsCollectorService({ config: { intervalMs: 60_000 } });
+				const service = new MetricsCollectorService({
+					config: { intervalMs: DurationConstants.MsPerMinute }
+				});
 				await service.tick();
 
 				expect(collected).toContain("p1");
@@ -360,7 +381,9 @@ describe("MetricsCollectorService", () => {
 					})
 				);
 
-				const service = new MetricsCollectorService({ config: { intervalMs: 60_000 } });
+				const service = new MetricsCollectorService({
+					config: { intervalMs: DurationConstants.MsPerMinute }
+				});
 				await service.tick();
 
 				expect(collected).toContain("good");
@@ -388,7 +411,7 @@ describe("MetricsCollectorService", () => {
 				);
 
 				const service = new MetricsCollectorService({
-					config: { intervalMs: 60_000 },
+					config: { intervalMs: DurationConstants.MsPerMinute },
 					platformComponentType: CUSTOM_PLATFORM_TYPE
 				});
 				await service.tick();
@@ -415,7 +438,7 @@ describe("MetricsCollectorService", () => {
 				);
 
 				const service = new MetricsCollectorService({
-					config: { intervalMs: 60_000 },
+					config: { intervalMs: DurationConstants.MsPerMinute },
 					platformComponentType: CUSTOM_PLATFORM_TYPE
 				});
 				await service.tick();
@@ -449,7 +472,7 @@ describe("MetricsCollectorService", () => {
 				);
 
 				const service = new MetricsCollectorService({
-					config: { intervalMs: 60_000 },
+					config: { intervalMs: DurationConstants.MsPerMinute },
 					platformComponentType: CUSTOM_PLATFORM_TYPE
 				});
 				await service.tick();

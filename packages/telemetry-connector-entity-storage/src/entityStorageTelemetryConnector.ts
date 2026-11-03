@@ -1,4 +1,5 @@
 // Copyright 2024 IOTA Stiftung.
+// Copyright 2026 3Sixty Trade Ltd.
 // SPDX-License-Identifier: Apache-2.0.
 import {
 	type IBackgroundTask,
@@ -12,6 +13,7 @@ import {
 	Coerce,
 	ComponentFactory,
 	Converter,
+	DurationConstants,
 	GeneralError,
 	Guards,
 	Is,
@@ -66,7 +68,7 @@ export class EntityStorageTelemetryConnector implements ITelemetryConnector {
 	/**
 	 * Default time in milliseconds to wait for the background thread to confirm a flush.
 	 */
-	public static readonly DEFAULT_FLUSH_TIMEOUT_MS: number = 30_000;
+	public static readonly DEFAULT_FLUSH_TIMEOUT_MS: number = 30 * DurationConstants.MsPerSecond;
 
 	/**
 	 * Maximum number of metric definitions to hold in the in-memory definition cache.
@@ -78,7 +80,8 @@ export class EntityStorageTelemetryConnector implements ITelemetryConnector {
 	 * Metric definitions are immutable once registered; a long TTI keeps active
 	 * metrics cached without permanent references.
 	 */
-	public static readonly DEFAULT_METRIC_DEFINITION_CACHE_TTI_MS: number = 3_600_000;
+	public static readonly DEFAULT_METRIC_DEFINITION_CACHE_TTI_MS: number =
+		DurationConstants.MsPerHour;
 
 	/**
 	 * Default time in milliseconds values are held so several share a single background task.
@@ -90,7 +93,7 @@ export class EntityStorageTelemetryConnector implements ITelemetryConnector {
 	 * the task queue is on a database, so the window is set an order of magnitude below that:
 	 * one task per second whatever the metric rate.
 	 */
-	public static readonly DEFAULT_TASK_COALESCE_MS: number = 1000;
+	public static readonly DEFAULT_TASK_COALESCE_MS: number = DurationConstants.MsPerSecond;
 
 	/**
 	 * Maximum number of values held while coalescing before a task is created regardless of
@@ -105,7 +108,7 @@ export class EntityStorageTelemetryConnector implements ITelemetryConnector {
 	 * Default time in milliseconds with tasks outstanding and none of them completing before
 	 * the background thread is treated as stalled.
 	 */
-	public static readonly DEFAULT_TASK_STALL_TIMEOUT_MS: number = 60_000;
+	public static readonly DEFAULT_TASK_STALL_TIMEOUT_MS: number = DurationConstants.MsPerMinute;
 
 	/**
 	 * Task type identifier for the metric value background task.
