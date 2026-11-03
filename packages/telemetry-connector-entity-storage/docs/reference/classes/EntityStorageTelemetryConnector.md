@@ -49,7 +49,7 @@ Runtime name for the class.
 
 ### DEFAULT\_FLUSH\_TIMEOUT\_MS {#default_flush_timeout_ms}
 
-> `readonly` `static` **DEFAULT\_FLUSH\_TIMEOUT\_MS**: `number` = `30_000`
+> `readonly` `static` **DEFAULT\_FLUSH\_TIMEOUT\_MS**: `number`
 
 Default time in milliseconds to wait for the background thread to confirm a flush.
 
@@ -65,7 +65,7 @@ Maximum number of metric definitions to hold in the in-memory definition cache.
 
 ### DEFAULT\_METRIC\_DEFINITION\_CACHE\_TTI\_MS {#default_metric_definition_cache_tti_ms}
 
-> `readonly` `static` **DEFAULT\_METRIC\_DEFINITION\_CACHE\_TTI\_MS**: `number` = `3_600_000`
+> `readonly` `static` **DEFAULT\_METRIC\_DEFINITION\_CACHE\_TTI\_MS**: `number` = `DurationConstants.MsPerHour`
 
 Time-to-idle in milliseconds for cached metric definitions.
 Metric definitions are immutable once registered; a long TTI keeps active
@@ -75,7 +75,7 @@ metrics cached without permanent references.
 
 ### DEFAULT\_TASK\_COALESCE\_MS {#default_task_coalesce_ms}
 
-> `readonly` `static` **DEFAULT\_TASK\_COALESCE\_MS**: `number` = `1000`
+> `readonly` `static` **DEFAULT\_TASK\_COALESCE\_MS**: `number` = `DurationConstants.MsPerSecond`
 
 Default time in milliseconds values are held so several share a single background task.
 Keeps the task write off the caller's path, which matters most for the metrics recorded
@@ -102,7 +102,7 @@ the scheduler can drain.
 
 ### DEFAULT\_TASK\_STALL\_TIMEOUT\_MS {#default_task_stall_timeout_ms}
 
-> `readonly` `static` **DEFAULT\_TASK\_STALL\_TIMEOUT\_MS**: `number` = `60_000`
+> `readonly` `static` **DEFAULT\_TASK\_STALL\_TIMEOUT\_MS**: `number` = `DurationConstants.MsPerMinute`
 
 Default time in milliseconds with tasks outstanding and none of them completing before
 the background thread is treated as stalled.
