@@ -2,7 +2,7 @@
 // Copyright 2026 3Sixty Trade Ltd.
 // SPDX-License-Identifier: Apache-2.0.
 import type { IPlatformComponent } from "@3sixty/api-models";
-import { ComponentFactory, GuardError, ValidationError } from "@3sixty/core";
+import { ComponentFactory, GeneralError, GuardError, ValidationError } from "@3sixty/core";
 import {
 	MetricsProducerFactory,
 	type IMetricsProducer,
@@ -13,6 +13,15 @@ import { MetricsCollectorService } from "../src/metricsCollectorService.js";
 
 const DEFAULT_PLATFORM_TYPE = "platform";
 const CUSTOM_PLATFORM_TYPE = "test-platform-component";
+const DEFAULT_TELEMETRY_TYPE = "telemetry";
+
+function makeTelemetryComponent(): ITelemetryComponent {
+	return {
+		className: () => "mock-telemetry",
+		addMetricValue: async () => "v",
+		addMetricValues: async (values: ITelemetryMetricValueEntry[]) => values.map(() => "v")
+	} as unknown as ITelemetryComponent;
+}
 
 function makeProducer(overrides: Partial<IMetricsProducer> = {}): IMetricsProducer {
 	return {
@@ -49,11 +58,15 @@ describe("MetricsCollectorService", () => {
 		}
 		// Always provide a default platform component so the service can be constructed.
 		ComponentFactory.register(DEFAULT_PLATFORM_TYPE, makeSingleTenantPassthrough);
+		ComponentFactory.register(DEFAULT_TELEMETRY_TYPE, makeTelemetryComponent);
 	});
 
 	afterEach(() => {
 		try {
 			ComponentFactory.unregister(DEFAULT_PLATFORM_TYPE);
+		} catch {}
+		try {
+			ComponentFactory.unregister(DEFAULT_TELEMETRY_TYPE);
 		} catch {}
 		try {
 			ComponentFactory.unregister(CUSTOM_PLATFORM_TYPE);
@@ -131,6 +144,11 @@ describe("MetricsCollectorService", () => {
 	describe("constructor", () => {
 		test("accepts default interval", () => {
 			expect(() => new MetricsCollectorService()).not.toThrow();
+		});
+
+		test("throws when the telemetry component is not registered", () => {
+			ComponentFactory.unregister(DEFAULT_TELEMETRY_TYPE);
+			expect(() => new MetricsCollectorService()).toThrow(GeneralError);
 		});
 
 		test("accepts positive interval", () => {

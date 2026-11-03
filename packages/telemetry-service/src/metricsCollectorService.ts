@@ -1,4 +1,5 @@
 // Copyright 2026 IOTA Stiftung.
+// Copyright 2026 3Sixty Trade Ltd.
 // SPDX-License-Identifier: Apache-2.0.
 import type { IPlatformComponent } from "@3sixty/api-models";
 import {
@@ -44,7 +45,7 @@ export class MetricsCollectorService implements IMetricsCollectorComponent {
 	 * Telemetry component the collected values are recorded with.
 	 * @internal
 	 */
-	private readonly _telemetryComponent?: ITelemetryComponent;
+	private readonly _telemetryComponent: ITelemetryComponent;
 
 	/**
 	 * Polling interval in milliseconds.
@@ -76,7 +77,7 @@ export class MetricsCollectorService implements IMetricsCollectorComponent {
 		this._platformComponent = ComponentFactory.get<IPlatformComponent>(
 			options?.platformComponentType ?? "platform"
 		);
-		this._telemetryComponent = ComponentFactory.getIfExists<ITelemetryComponent>(
+		this._telemetryComponent = ComponentFactory.get<ITelemetryComponent>(
 			options?.telemetryComponentType ?? "telemetry"
 		);
 
