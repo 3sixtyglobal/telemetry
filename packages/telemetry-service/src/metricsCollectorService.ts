@@ -58,7 +58,7 @@ export class MetricsCollectorService implements IMetricsCollectorComponent {
 	 * Pending scheduled tick handle.
 	 * @internal
 	 */
-	private _timer: ReturnType<typeof globalThis.setTimeout> | undefined;
+	private _timer?: ReturnType<typeof globalThis.setTimeout>;
 
 	/**
 	 * Whether the service is currently running.

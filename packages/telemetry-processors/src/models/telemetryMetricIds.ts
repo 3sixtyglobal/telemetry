@@ -4,7 +4,6 @@
 /**
  * Metric IDs emitted by telemetry-processors.
  */
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const TelemetryMetricIds = {
 	/**
 	 * Total number of REST requests received.

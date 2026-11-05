@@ -6,5 +6,4 @@ import type { ITelemetryConnector } from "../models/ITelemetryConnector.js";
 /**
  * Factory for creating telemetry connectors.
  */
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const TelemetryConnectorFactory = Factory.createFactory<ITelemetryConnector>("telemetry");

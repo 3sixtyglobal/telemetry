@@ -4,7 +4,6 @@
 /**
  * The types of readers.
  */
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const OpenTelemetryReaderTypes = {
 	/**
 	 * Prometheus.

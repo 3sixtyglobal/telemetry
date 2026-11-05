@@ -34,7 +34,7 @@ describe("TelemetryService", () => {
 		});
 
 		test("addMetricValue makes a single connector call with no tenant fan-out", async () => {
-			const calls: { contextIds: IContextIds | undefined }[] = [];
+			const calls: { contextIds?: IContextIds }[] = [];
 			TelemetryConnectorFactory.register(
 				"telemetry",
 				() =>
@@ -68,7 +68,7 @@ describe("TelemetryService", () => {
 		});
 
 		test("addMetricValue fans out to every tenant when the context has no tenant", async () => {
-			const calls: { contextIds: IContextIds | undefined }[] = [];
+			const calls: { contextIds?: IContextIds }[] = [];
 			TelemetryConnectorFactory.register(
 				"telemetry",
 				() =>
@@ -88,7 +88,7 @@ describe("TelemetryService", () => {
 		});
 
 		test("addMetricValue makes a single connector call when the context already has a tenant", async () => {
-			const calls: { contextIds: IContextIds | undefined }[] = [];
+			const calls: { contextIds?: IContextIds }[] = [];
 			TelemetryConnectorFactory.register(
 				"telemetry",
 				() =>

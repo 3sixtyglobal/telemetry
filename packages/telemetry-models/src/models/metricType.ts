@@ -4,7 +4,6 @@
 /**
  * The types of metrics.
  */
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const MetricType = {
 	/**
 	 * Counter.

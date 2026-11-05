@@ -4,7 +4,6 @@
 /**
  * The types of metric value operations for increment decrement counter metrics.
  */
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const MetricCounterOperation = {
 	/**
 	 * Increment Counter.
